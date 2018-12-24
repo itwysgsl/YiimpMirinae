@@ -13,8 +13,7 @@ extern "C" {
 
 #include <stdint.h>
 
-// void mirinae(const void* data, size_t length, void* output, int height, const void* seed);
-void mirinae_hash(const char* input, char* output, uint32_t len);
+void mirinae_hash(const void* input, void* output, size_t length, int height, const void* seed);
 
 #ifdef __cplusplus
 }
