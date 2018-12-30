@@ -5,16 +5,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "common.h"
+#include <memory.h>
 
 #include "../sha3/sph_groestl.h"
 #include "kupyna/kupyna512.h"
 #include "mirinae.h"
-#include <memory.h>
 
-void mirinae_hash(const void* input, void* output, size_t length, int height, const void* seed)
+//#include "common.h"
+
+const char* mirinae(const void* input, void* output, uint32_t len, int height, const void* seed)
 {
-	unsigned char hash[64] = { 0 };
+	/*
+	seed = get_seed;
+	height = 74; //test
+	*/
+
+	/*unsigned*/ const char* hash[64] = { 0 };
 	unsigned char offset[64] = { 0 };
 	const int window = 4096;
 	const int aperture = 32;
@@ -29,7 +35,7 @@ void mirinae_hash(const void* input, void* output, size_t length, int height, co
 	memcpy(&n, offset, 8);
 
 	sph_groestl512_init(&ctx_groestl);
-	sph_groestl512(&ctx_groestl, input, length);
+	sph_groestl512(&ctx_groestl, input, len /*length=80*/);
 	sph_groestl512_close(&ctx_groestl, hash);
 
 	unsigned int h_loop = hash[0];
@@ -47,5 +53,14 @@ void mirinae_hash(const void* input, void* output, size_t length, int height, co
 	sph_groestl512(&ctx_groestl, hash, 64);
 	sph_groestl512_close(&ctx_groestl, hash);
 
+	//memcpy(output, hash, 32);
+	return hash[32];
+}
+
+void mirinae_hash(const char* input, char* output, uint32_t len)
+{
+	const char* hash = { 0 };
+	input = mirinae;
+	hash = input;
 	memcpy(output, hash, 32);
 }
