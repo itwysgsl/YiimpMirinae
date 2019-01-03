@@ -7,22 +7,17 @@
 #include <string.h>
 #include <memory.h>
 
-#include "../sha3/sph_groestl.h"
+#include "sha3/sph_groestl.h"
 #include "kupyna/kupyna512.h"
 #include "mirinae.h"
 
 //#include "common.h"
 
-const char* mirinae(const void* input, void* output, uint32_t len, int height, const void* seed)
+void mirinae(const void* data, void* output, size_t length, int height, const void* seed)
 {
-	/*
-	seed = get_seed;
-	height = 74; //test
-	*/
-
-	/*unsigned*/ const char* hash[64] = { 0 };
+	unsigned char hash[64] = { 0 };
 	unsigned char offset[64] = { 0 };
-	const int window = 4096;
+	const int window = 256;
 	const int aperture = 32;
 	int64_t n = 0;
 
@@ -35,32 +30,32 @@ const char* mirinae(const void* input, void* output, uint32_t len, int height, c
 	memcpy(&n, offset, 8);
 
 	sph_groestl512_init(&ctx_groestl);
-	sph_groestl512(&ctx_groestl, input, len /*length=80*/);
+	sph_groestl512(&ctx_groestl, data, length);
 	sph_groestl512_close(&ctx_groestl, hash);
 
-	unsigned int h_loop = hash[0];
-	for (int i = 0; i < (((n % height) + (height + 1)) % window); i++) {
-		for (int j = 0; j < (h_loop % aperture); j++) {
+	unsigned int light = (hash[0] > 0) ? hash[0] : 1;
+	unsigned int outer_loop = (((n % height) + (height + 1)) % window);
+	for (int i = 0; i < outer_loop; i++) {
+		unsigned int inner_loop = (light % aperture);
+		for (int j = 0; j < inner_loop; j++) {
 			kupyna512_init(&ctx_kupyna);
 			kupyna512_update(&ctx_kupyna, hash, 64);
 			kupyna512_final(&ctx_kupyna, hash);
 		}
 
-		h_loop = hash[0];
+		light = (hash[inner_loop] > 0) ? hash[inner_loop] : 1;
 	}
 
 	sph_groestl512_init(&ctx_groestl);
 	sph_groestl512(&ctx_groestl, hash, 64);
 	sph_groestl512_close(&ctx_groestl, hash);
 
-	//memcpy(output, hash, 32);
-	return hash[32];
+	memcpy(output, hash, 32);
 }
 
-void mirinae_hash(const char* input, char* output, uint32_t len)
+void mirinae_hash(const char* input, char* output, uint32_t height)
 {
-	const char* hash = { 0 };
-	input = mirinae;
-	hash = input;
-	memcpy(output, hash, 32);
+	unsigned char seed[32] = { 0 };
+	memcpy(seed, &input[5], 33*sizeof(unsigned char));
+	mirinae(input, output, 80, height, seed);
 }
