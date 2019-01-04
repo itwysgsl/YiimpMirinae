@@ -11,7 +11,7 @@
 #include "kupyna/kupyna512.h"
 #include "mirinae.h"
 
-void mirinae_hash(const void* input, void* output, uint32_t height)
+void mirinae_hash(const char* input, char* output, uint32_t height)
 {
 	unsigned char hash[64] = { 0 };
 	unsigned char offset[64] = { 0 };
