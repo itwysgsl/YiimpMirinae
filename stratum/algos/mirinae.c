@@ -11,18 +11,18 @@
 #include "kupyna/kupyna512.h"
 #include "mirinae.h"
 
-//#include "common.h"
-
-void mirinae(const void* data, void* output, size_t length, int height, const void* seed)
+void mirinae_hash(const void* input, void* output, uint32_t height)
 {
 	unsigned char hash[64] = { 0 };
 	unsigned char offset[64] = { 0 };
+	unsigned char seed[32] = { 0 };
 	const int window = 256;
 	const int aperture = 32;
 	int64_t n = 0;
 
 	sph_groestl512_context ctx_groestl;
 	struct kupyna512_ctx_t ctx_kupyna;
+	memcpy(seed, input + 4, (36 - 4) * sizeof(*input));
 
 	kupyna512_init(&ctx_kupyna);
 	kupyna512_update(&ctx_kupyna, seed, 32);
@@ -30,12 +30,11 @@ void mirinae(const void* data, void* output, size_t length, int height, const vo
 	memcpy(&n, offset, 8);
 
 	sph_groestl512_init(&ctx_groestl);
-	sph_groestl512(&ctx_groestl, data, length);
+	sph_groestl512(&ctx_groestl, input, 80);
 	sph_groestl512_close(&ctx_groestl, hash);
 
 	unsigned int light = (hash[0] > 0) ? hash[0] : 1;
-	unsigned int outer_loop = (((n % height) + (height + 1)) % window);
-	for (int i = 0; i < outer_loop; i++) {
+	for (int i = 0; i < (((n % height) + (height + 1)) % window); i++) {
 		unsigned int inner_loop = (light % aperture);
 		for (int j = 0; j < inner_loop; j++) {
 			kupyna512_init(&ctx_kupyna);
@@ -51,11 +50,4 @@ void mirinae(const void* data, void* output, size_t length, int height, const vo
 	sph_groestl512_close(&ctx_groestl, hash);
 
 	memcpy(output, hash, 32);
-}
-
-void mirinae_hash(const char* input, char* output, uint32_t height)
-{
-	unsigned char seed[32] = { 0 };
-	memcpy(seed, &input[5], 33*sizeof(unsigned char));
-	mirinae(input, output, 80, height, seed);
 }
