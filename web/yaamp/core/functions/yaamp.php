@@ -55,6 +55,7 @@ function yaamp_get_algos()
 		'groestl', // dmd-gr -m 256 (deprecated)
 		'dmd-gr',
 		'myr-gr',
+		'mirinae', // microbitcoin
 		'm7m',
 		'phi',
 		'phi2',
@@ -174,6 +175,7 @@ function getAlgoColors($algo)
 		'jha'		=> '#a0d0c0',
 		'dmd-gr'	=> '#a0c0f0',
 		'myr-gr'	=> '#a0c0f0',
+		'mirinae'	=> '#42f4ee',
 		'hmq1725'	=> '#ffa0a0',
 		'hsr'		=> '#aa70ff',
 		'keccak'	=> '#c0f0c0',
@@ -270,6 +272,7 @@ function getAlgoPort($algo)
 		//'groestl'	=> 5333,
 		'dmd-gr'	=> 5333,
 		'myr-gr'	=> 5433,
+		'mirinae'	=> 5533,
 		'zr5'		=> 5533,
 		// 5555 to 5683 reserved
 		'blake'		=> 5733,
