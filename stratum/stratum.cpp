@@ -157,15 +157,16 @@ YAAMP_ALGO g_algos[] =
 	{"qubit", qubit_hash, 1, 0, 0},
 	{"groestl", groestl_hash, 0x100, 0, sha256_hash_hex }, /* groestlcoin */
 	{"dmd-gr", groestl_hash, 0x100, 0, 0}, /* diamond (double groestl) */
-	{"mirinae", mirinae_hash, 0x100, 0, 0}, /* aka MBC hash (kupyna512 + groestl) */
 	{"myr-gr", groestlmyriad_hash, 1, 0, 0}, /* groestl + sha 64 */
+	{"mirinae", mirinae_hash, 1, 0, 0}, /* aka MBC hash (kupyna512 + groestl) */
+
 	{"skein", skein_hash, 1, 0, 0},
 	{"sonoa", sonoa_hash, 1, 0, 0},
 	{"tribus", tribus_hash, 1, 0, 0},
 	{"keccak", keccak256_hash, 0x80, 0, sha256_hash_hex },
 	{"keccakc", keccak256_hash, 0x100, 0, 0},
 	{"hex", hex_hash, 0x100, 0, sha256_hash_hex },
-	
+
 	{"phi", phi_hash, 1, 0, 0},
 	{"phi2", phi2_hash, 0x100, 0, 0},
 
