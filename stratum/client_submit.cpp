@@ -47,14 +47,9 @@ void build_submit_values(YAAMP_JOB_VALUES *submitvalues, YAAMP_JOB_TEMPLATE *tem
 
 	binlify(submitvalues->header_bin, submitvalues->header_be);
 
-//	printf("%s\n", submitvalues->header_be);
 	int header_len = strlen(submitvalues->header)/2;
 
-	if (strcmp(g_stratum_algo, "mirinae")) {
-		g_current_algo->hash_function((char *)submitvalues->header_bin, (char *)submitvalues->hash_bin, templ->height);
-	} else {
-		g_current_algo->hash_function((char *)submitvalues->header_bin, (char *)submitvalues->hash_bin, header_len);
-	}
+	g_current_algo->hash_function((char *)submitvalues->header_bin, (char *)submitvalues->hash_bin, header_len);
 
 	hexlify(submitvalues->hash_hex, submitvalues->hash_bin, 32);
 	string_be(submitvalues->hash_hex, submitvalues->hash_be);
